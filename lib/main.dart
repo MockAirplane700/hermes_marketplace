@@ -1,11 +1,6 @@
-import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
-import 'package:hermes_marketplace/logic/cart_provider.dart';
 import 'package:hermes_marketplace/pages/bloc_pages/checkout.dart';
-import 'package:hermes_marketplace/pages/bloc_pages/shop_items.dart';
-import 'package:hermes_marketplace/pages/check_out.dart';
 import 'package:hermes_marketplace/pages/home.dart';
-import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,7 +28,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/' : (BuildContext context) => const ShopItems(),
+        '/' : (BuildContext context) => const MyHomePage(title: ''),
         '/checkout' : (BuildContext context) => const CheckoutBloc()
       },
     );
@@ -64,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   static const List<Widget> _widgetOptions = [
     Home(),
-    Checkout()
+    CheckoutBloc()
   ];
   
   void _onItemTapped(int index) {
@@ -82,32 +77,16 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: _widgetOptions.elementAt(_selectedIndex)
       ),
       bottomNavigationBar: BottomNavigationBar(
-          items: <BottomNavigationBarItem>[
-            const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(
-                icon: Badge(
-              badgeContent: Consumer<CartProvider>(
-                builder: (context, value, child) {
-                  return Text(
-                    value.getCounter().toString(),
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                  );
-                },
-              ),
-              position: const BadgePosition(start: 30, bottom: 30),
-              child: const Icon(Icons.shopping_cart),
-            ),
+                icon: Icon(Icons.shopping_cart),
               label: 'Cart'
             )
           ],

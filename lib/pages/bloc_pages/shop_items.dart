@@ -36,7 +36,7 @@ class ShopItemsWidget extends StatelessWidget {
           trailing: IconButton(
             icon: const Icon(Icons.add_shopping_cart),
             onPressed: () {
-              bloc.addToCart(shopList[i]);
+              bloc.addToCart(shopList[i], context);
             },
           ),
           onTap: () {},

@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 class CartItemsBloc {
   final cartStreamController = StreamController.broadcast();
 
@@ -15,19 +18,39 @@ class CartItemsBloc {
     'cart items' : []
   };
 
-  void addToCart(item) {
+  void addToCart(item , BuildContext context) {
     /// update the [stock_quantity] of the object
-    allItems['shop items'].remove(item);
-    allItems['cart items'].add(item);
+    // check if the item is already in the cart
+    List list = allItems['cart items'];
+    bool boolean = false;
+    for (var variable in list) {
+      if (variable['name'].contains(item['name'])){
+        boolean = true;
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Item is already in the cart')));
+        break;
+      }
+    }//end for loop
+
+    if (!boolean){
+      allItems['shop items'].remove(item);
+      allItems['cart items'].add(item);
+    }
     cartStreamController.sink.add(allItems);
   }//end add to cart
 
   void removeFromCart(item) {
     /// update the [stock_quantity] of the object
     allItems['cart items'].remove(item);
-    allItems['shop items'].add(item);
     cartStreamController.sink.add(allItems);
   }//end remove from cart
+
+  void emptyCart(){
+    allItems['cart items'].clear();
+  }
+
+  fetchCartContents() {
+    return allItems['cart items'];
+  }
 
   void dispose() {
     cartStreamController.close();

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hermes_marketplace/constants/custom_variables.dart';
 import 'package:hermes_marketplace/logic/products.dart';
+import 'package:hermes_marketplace/logic/search_delegate_logic.dart';
 import 'package:hermes_marketplace/objects/product.dart';
 import 'package:hermes_marketplace/pages/product_display_page.dart';
+import 'package:hermes_marketplace/widgets/custom_navigation_drawer.dart';
+import 'package:hermes_marketplace/widgets/custom_search_delegate.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -18,6 +21,7 @@ class _HomeState extends State<Home> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     List<Product>  list = Products.fetchProducts();
+    SearchDelegateLogic.setSearchList(list);
 
     return Scaffold(
       appBar: AppBar(
@@ -28,18 +32,20 @@ class _HomeState extends State<Home> {
           IconButton(
               onPressed: (){
                 // go to search
+                showSearch(context: context, delegate: MySearchDelegate());
               },
               icon: const Icon(Icons.search)
           )
         ],
       ),
       backgroundColor: backgroundColor,
+      drawer: const CustomDrawer(),
       body: Center(child: GridView.count(
           crossAxisCount: 2,
           children: List.generate(list.length, (index) {
             return GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=> ProductDisplay(product: list[index], productIndex: index,)));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> ProductDisplay(product: list[index])));
               },
               child: Card(
                 color: cardBackgroundColor,

@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hermes_marketplace/constants/custom_variables.dart';
-import 'package:hermes_marketplace/logic/cart_provider.dart';
+import 'package:hermes_marketplace/logic/bloc/cart_items_bloc.dart';
 import 'package:hermes_marketplace/objects/cart.dart';
 import 'package:hermes_marketplace/objects/product.dart';
-import 'package:hermes_marketplace/persistence/db_helper.dart';
 import 'package:hermes_marketplace/persistence/fake_database.dart';
+import 'package:hermes_marketplace/widgets/custom_search_delegate.dart';
 import 'package:provider/provider.dart';
 
 class ProductDisplay extends StatefulWidget {
   final Product product;
-  final int productIndex;
 
-  const ProductDisplay({Key? key ,  required this.product, required this.productIndex}) : super(key: key);
+  const ProductDisplay({Key? key ,  required this.product,}) : super(key: key);
 
   @override
   State<ProductDisplay> createState() => _ProductDisplayState();
@@ -20,7 +19,6 @@ class ProductDisplay extends StatefulWidget {
 class _ProductDisplayState extends State<ProductDisplay> {
   int pageIndex = 0;
   int quantity = 1;
-  DbHelper dbHelper = DbHelper();
   List<Product> products = FakeDatabase.getProducts();
 
   void _increment() {
@@ -38,7 +36,7 @@ class _ProductDisplayState extends State<ProductDisplay> {
   @override
   Widget build(BuildContext context) {
 
-    final cart = Provider.of<CartProvider>(context);
+    // final cart = Provider.of<CartProvider>(context);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
@@ -50,30 +48,20 @@ class _ProductDisplayState extends State<ProductDisplay> {
       widgets.add(Image.network(value));
     }//end images
 
-    void saveData(int index) {
-      ValueNotifier<int> valueNotifier = ValueNotifier(products[index].quantity);
-      dbHelper.insert(
-          Cart(
-              id: index, productId: index.toString(),
-              productName: products[index].name, initialPrice: double.parse(products[index].price),
-              productPrice: double.parse(products[index].price), quantity: ValueNotifier(1),
-              amazonLink: products[index].amazonLink, image: products[index].networkImage[0]
-          )
-      ).then((value) {
-        cart.addTotalPrice(double.parse(products[index].price));
-        cart.addCounter();
-      }).onError((error, stackTrace) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('There was an error $error, \n stack trace $stackTrace'))
-        );
-      });
-    }//end save data
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product display' , style: TextStyle(color: textColor),),
         backgroundColor: appBarColor,
         iconTheme: const IconThemeData(color: iconThemeDataColor),
+        actions: [
+          IconButton(
+              onPressed: (){
+                // go to search
+                showSearch(context: context, delegate: MySearchDelegate());
+              },
+              icon: const Icon(Icons.search)
+          )
+        ],
       ),
       backgroundColor: backgroundColor,
       body: SingleChildScrollView(
@@ -144,7 +132,6 @@ class _ProductDisplayState extends State<ProductDisplay> {
                     onPressed: () {
                       // add to the quantity by 1
                       _increment();
-                      widget.product.incrementQuantity();
                     },
                     icon: const Icon(Icons.add)
                 ),
@@ -154,7 +141,6 @@ class _ProductDisplayState extends State<ProductDisplay> {
                       //decrement the amount
                       if (quantity > 1) {
                         _decrement();
-                        widget.product.decrementQuantity();
                       }
                     },
                     icon: const Icon(Icons.remove)
@@ -167,7 +153,15 @@ class _ProductDisplayState extends State<ProductDisplay> {
                 Expanded(child: ElevatedButton(
                     onPressed: (){
                       //add to cart
-                      saveData(widget.productIndex);
+                      double resultPrice = double.parse(widget.product.price) * quantity;
+                      bloc.addToCart({
+                        'name' : widget.product.name,
+                        'price' : resultPrice.toString(),
+                        'image':widget.product.networkImage[0],
+                        'quantity' : quantity,
+                        'amazonLink':widget.product.amazonLink
+                      }, context
+                      );
                     },
                     child: const Text('Add to cart')
                 ))
