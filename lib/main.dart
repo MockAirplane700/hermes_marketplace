@@ -3,6 +3,7 @@ import 'package:hermes_marketplace/pages/bloc_pages/checkout.dart';
 import 'package:hermes_marketplace/pages/home.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

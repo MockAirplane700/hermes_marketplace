@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hermes_marketplace/constants/custom_variables.dart';
+import 'package:hermes_marketplace/logic/order_history_logic.dart';
 import 'package:hermes_marketplace/objects/product.dart';
 import 'package:hermes_marketplace/pages/product_display_page.dart';
 import 'package:hermes_marketplace/persistence/fake_database.dart';
@@ -13,7 +14,7 @@ class OrderHistoryPage extends StatefulWidget {
 }
 
 class _OrderHistoryPageState extends State<OrderHistoryPage> {
-  final List<Product> products = FakeDatabase.getProducts();
+  // final List<Product> products = FakeDatabase.getProducts();
   
   @override
   Widget build(BuildContext context) {
@@ -36,25 +37,35 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         ],
       ),
       backgroundColor: backgroundColor,
-      body: products.isNotEmpty ? Padding(padding: EdgeInsets.all(height/80) , child: ListView.builder(
-          itemBuilder: (context , index) {
-            return Card(
-              shadowColor: shadowColor,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(width/70)),
-              elevation: 8,
-              child: ListTile(
-                leading: Image.network(products[index].networkImage[0]),
-                title: Text(products[index].name , style: const TextStyle(color: textColor, ),maxLines: 2,overflow: TextOverflow.ellipsis,),
-                subtitle: Text('CAD\$${products[index].price}0', style: const TextStyle(color: textColor, fontWeight: FontWeight.bold),),
-                trailing: Text(products[index].quantity.toString() , style: const TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 20),),
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=> ProductDisplay(product: products[index])));
+      body: FutureBuilder(
+          builder: (context , snapshot) {
+            if (snapshot.hasData) {
+              List products = snapshot.data as List;
+              return products.isNotEmpty ? Padding(padding: EdgeInsets.all(height/80) , child: ListView.builder(
+                itemBuilder: (context , index) {
+                  return Card(
+                    shadowColor: shadowColor,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(width/70)),
+                    elevation: 8,
+                    child: ListTile(
+                      leading: Image.network(products[index].networkImage[0]),
+                      title: Text(products[index].name , style: const TextStyle(color: textColor, ),maxLines: 2,overflow: TextOverflow.ellipsis,),
+                      subtitle: Text('CAD\$${products[index].price}0', style: const TextStyle(color: textColor, fontWeight: FontWeight.bold),),
+                      trailing: Text(products[index].quantity.toString() , style: const TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 20),),
+                      // onTap: () {
+                      //   Navigator.push(context, MaterialPageRoute(builder: (context)=> ProductDisplay(product: products[index])));
+                      // },
+                    ),
+                  );
                 },
-              ),
-            );
+                itemCount: products.length,
+              ),) : const Center(child: Text('No Present Order history', style: TextStyle(color: textColor),),);
+            }else{
+              return const Center(child: CircularProgressIndicator(),);
+            }//end if-else
           },
-        itemCount: products.length,
-      ),) : const Center(child: Text('No Present Order history', style: TextStyle(color: textColor),),),
+        future: OrderHistoryLogic.getHistoryFromSql(),
+      )
     );
   }
 }

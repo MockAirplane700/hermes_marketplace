@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hermes_marketplace/constants/custom_variables.dart';
 import 'package:hermes_marketplace/logic/bloc/cart_items_bloc.dart';
-import 'package:hermes_marketplace/objects/cart.dart';
 import 'package:hermes_marketplace/objects/product.dart';
 import 'package:hermes_marketplace/persistence/fake_database.dart';
 import 'package:hermes_marketplace/widgets/custom_search_delegate.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ProductDisplay extends StatefulWidget {
   final Product product;
@@ -81,7 +81,7 @@ class _ProductDisplayState extends State<ProductDisplay> {
                 children: [
                   IconButton(
                       onPressed: () {
-
+                        Share.share(widget.product.amazonLink);
                       },
                       icon: const Icon(Icons.share)
                   )
@@ -101,6 +101,14 @@ class _ProductDisplayState extends State<ProductDisplay> {
                 },
               ),
             ),
+            // price
+            SizedBox(height: height/80,),
+            Row(
+              children: [
+                SizedBox(width: width/100,),
+                Text('\$${widget.product.price}' , style: const TextStyle(color: textColor, fontSize: 25),),
+              ],
+            ),
             // the product description
             Padding(padding: EdgeInsets.all(width/50), child: Card(
               color: cardBackgroundColor,
@@ -108,22 +116,15 @@ class _ProductDisplayState extends State<ProductDisplay> {
               elevation: 5,
               child: Padding(padding: EdgeInsets.all(width/80), child: Text(widget.product.description),),
             ),),
-            // the social network we found it on
-            Padding(padding: EdgeInsets.all(width/80), child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(onPressed: () {
-                  // link to tiktok source
-                }, icon: const Icon(Icons.people))
-              ],
-            ) ,),
-            // price
-            Row(
-              children: [
-                SizedBox(width: width/100,),
-                Text('\$${widget.product.price}' , style: const TextStyle(color: textColor, fontSize: 25),),
-              ],
-            ),
+            // // the social network we found it on
+            // Padding(padding: EdgeInsets.all(width/80), child: Row(
+            //   mainAxisAlignment: MainAxisAlignment.end,
+            //   children: [
+            //     IconButton(onPressed: () {
+            //       // link to tiktok source
+            //     }, icon: const Icon(Icons.people))
+            //   ],
+            // ) ,),
             // quantity
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -156,8 +157,10 @@ class _ProductDisplayState extends State<ProductDisplay> {
                       double resultPrice = double.parse(widget.product.price) * quantity;
                       bloc.addToCart({
                         'name' : widget.product.name,
+                        'description' : widget.product.description,
                         'price' : resultPrice.toString(),
-                        'image':widget.product.networkImage[0],
+                        'source': widget.product.source,
+                        'networkImage':widget.product.networkImage[0],
                         'quantity' : quantity,
                         'amazonLink':widget.product.amazonLink
                       }, context

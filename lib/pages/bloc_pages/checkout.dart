@@ -1,7 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hermes_marketplace/constants/custom_variables.dart';
 import 'package:hermes_marketplace/logic/bloc/cart_items_bloc.dart';
 import 'package:hermes_marketplace/logic/check_out_logic.dart';
+import 'package:hermes_marketplace/logic/order_history_logic.dart';
+import 'package:hermes_marketplace/objects/history_object.dart';
+import 'package:hermes_marketplace/objects/product.dart';
 import 'package:hermes_marketplace/widgets/custom_search_delegate.dart';
 
 class CheckoutBloc extends StatefulWidget {
@@ -43,7 +48,7 @@ class _CheckoutBlocState extends State<CheckoutBloc> {
           quantity = cartList[i]['quantity'];
         return ListTile(
           title: Text(cartList[i]['name'] , maxLines: 2, overflow: TextOverflow.ellipsis,),
-          leading: Image.network(cartList[i]['image']),
+          leading: Image.network(cartList[i]['networkImage']),
           subtitle: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -117,12 +122,41 @@ class _CheckoutBlocState extends State<CheckoutBloc> {
                 onPressed: () {
                   final checkoutProducts = snapshot.data['cart items'];
                   String result = '';
+                  double total = 0.0;
+                  // add product to history
                   for (var value in checkoutProducts){
                     result = '$result , ${value['amazonLink']}';
+                    OrderHistoryLogic.addNewProduct(HistoryObject(id: Random().nextInt(1000000),
+                        product: Product(
+                            name: value['name'], description:  value['description'],
+                            networkImage: [value['networkImage']], price:  value['price'],
+                            quantity:   value['quantity'], source:  value['source'],
+                            amazonLink:  value['amazonLink'])
+                    ));
                   }
-                  // add product to history
-                  CheckOutLogic.sendCheckOutData(result);
+
+                  // 'id' : id,
+                  // 'name': product.name,
+                  // 'description' : product.description,
+                  // 'networkImage' : product.networkImage,
+                  // 'price': product.price,
+                  // 'quantity' : product.quantity,
+                  // 'source' : product.source,
+                  // 'amazonLink' : product.amazonLink
+
+                  // CheckOutLogic.sendCheckOutData(result);
                   bloc.emptyCart();
+                  //call scaffold to inform the user of the change
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Items have been added to order history')));
+                  setState(() {});
+
+                  // call dialog box thanking for patronage
+                  showDialog(context: context, builder: (context) => const AlertDialog(
+                    backgroundColor: dialogBoxBackgroundColor,
+                    content: Text('The items in your cart have been added to your amazon cart. Please go to your amazon cart to complete the purchase.\n\n\nWe thank you for your patronage. :)' ,
+                      style: TextStyle(color: textColor),
+                    ),
+                  ));
                 },
                 child: const Text("Checkout"),
               ),
