@@ -17,7 +17,7 @@ class FakeDatabase {
             'https://m.media-amazon.com/images/I/71hbcKwr6pL._AC_SL1500_.jpg'
           ],
           price: '54.99', quantity: 1,
-          source: 'https://www.tiktok.com', amazonLink: 'https://a.co/d/eSfwDiZ'
+          source: 'https://www.tiktok.com', amazonLink: 'https://a.co/d/eSfwDiZ', asin: 'B0B7XJSBQ3'
       ),
       Product(
           name: 'Venustas Heated Jacket with Battery Pack (Unisex), Heated Coat for Women and Men with Detachable Hood',
@@ -31,7 +31,7 @@ class FakeDatabase {
           ],
           price: '179.99',
           quantity: 1, source: 'https://www.tiktok.com',
-          amazonLink: 'https://a.co/d/6xvenWP'
+          amazonLink: 'https://a.co/d/6xvenWP', asin: 'B07X15SH24'
       )
     ];
   }//end get products

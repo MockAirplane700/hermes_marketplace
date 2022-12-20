@@ -37,7 +37,7 @@ class SQLDatabase {
           name: maps[index]['name'], description:maps[index][' description'] ?? '',
           networkImage: [maps[index]['networkImage'].toString(),''], price: maps[index]['price'],
           quantity: maps[index]['quantity'], source: maps[index]['source'],
-          amazonLink: maps[index]['amazonLink']);
+          amazonLink: maps[index]['amazonLink'], asin: '');
     }).toList();
   }//end get history
 

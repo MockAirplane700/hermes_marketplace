@@ -114,13 +114,14 @@ class _CheckoutBlocState extends State<CheckoutBloc> {
                 child: Row(
                   children: [
                     const Expanded(flex: 1, child: Text('Total ( No Tax or delivery)' , style: TextStyle(color: textColor, fontWeight: FontWeight.bold),)),
-                    Text('CAD\$$total'  , style: const TextStyle(color: textColor, fontSize: 20))
+                    Text('CAD\$${total.toStringAsFixed(2)}'  , style: const TextStyle(color: textColor, fontSize: 20))
                   ],
                 ),
               ),
               ElevatedButton(
                 onPressed: () {
                   final checkoutProducts = snapshot.data['cart items'];
+
                   String result = '';
                   double total = 0.0;
                   // add product to history
@@ -131,7 +132,7 @@ class _CheckoutBlocState extends State<CheckoutBloc> {
                             name: value['name'], description:  value['description'],
                             networkImage: [value['networkImage']], price:  value['price'],
                             quantity:   value['quantity'], source:  value['source'],
-                            amazonLink:  value['amazonLink'])
+                            amazonLink:  value['amazonLink'], asin: value['asin'])
                     ));
                   }
 
@@ -145,6 +146,7 @@ class _CheckoutBlocState extends State<CheckoutBloc> {
                   // 'amazonLink' : product.amazonLink
 
                   // CheckOutLogic.sendCheckOutData(result);
+                  CheckOutLogic.sendUrlToLocalBrowser();
                   bloc.emptyCart();
                   //call scaffold to inform the user of the change
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Items have been added to order history')));

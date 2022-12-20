@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CartItemsBloc {
@@ -32,8 +31,8 @@ class CartItemsBloc {
     }//end for loop
 
     if (!boolean){
-      allItems['shop items'].remove(item);
       allItems['cart items'].add(item);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${item['name']} has been added to cart')));
     }
     cartStreamController.sink.add(allItems);
   }//end add to cart

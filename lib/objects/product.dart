@@ -6,10 +6,11 @@ class Product {
   late final int quantity;
   final String source;
   final String amazonLink;
+  final String asin;
 
   Product({
     required this.name, required this.description, required this.networkImage,
-    required this.price, required this.quantity, required this.source, required this.amazonLink
+    required this.price, required this.quantity, required this.source, required this.amazonLink, required this.asin
   });
 
 
@@ -21,7 +22,8 @@ class Product {
       'price':price,
       'quantity':quantity,
       'source': source,
-      'link':amazonLink
+      'link':amazonLink,
+      'asin':asin
     };
   }//end to json
 
@@ -30,7 +32,7 @@ class Product {
         name: json['name'], description: json['description'],
         networkImage: json['networkImages'], price: json['price'],
         quantity: 1,
-        source: json['source'], amazonLink: json['amazonLink']);
+        source: json['source'], amazonLink: json['amazonLink'], asin: json['asin']);
   }//end from json
 
 

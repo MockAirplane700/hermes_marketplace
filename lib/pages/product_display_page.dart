@@ -106,7 +106,7 @@ class _ProductDisplayState extends State<ProductDisplay> {
             Row(
               children: [
                 SizedBox(width: width/100,),
-                Text('\$${widget.product.price}' , style: const TextStyle(color: textColor, fontSize: 25),),
+                Text('CAD\$${widget.product.price}' , style: const TextStyle(color: textColor, fontSize: 25),),
               ],
             ),
             // the product description
@@ -162,9 +162,10 @@ class _ProductDisplayState extends State<ProductDisplay> {
                         'source': widget.product.source,
                         'networkImage':widget.product.networkImage[0],
                         'quantity' : quantity,
-                        'amazonLink':widget.product.amazonLink
-                      }, context
-                      );
+                        'amazonLink':widget.product.amazonLink,
+                        'asin':widget.product.asin
+                      }, context);
+
                     },
                     child: const Text('Add to cart')
                 ))

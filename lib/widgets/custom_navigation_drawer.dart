@@ -81,6 +81,65 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 ));
               },
             ),
+            // About the application and developer
+            ListTile(
+              leading: const Icon(Icons.info_outlined, color: iconColor,),
+              title: const Text('About the app!', style: TextStyle(color: textColor),),
+              onTap: () {
+                //open dialog to icon buttons to socials
+                showDialog(context: context, builder: (context)=> AlertDialog(
+                  title: const Text('About the app and the developer behind it!.'),
+                  backgroundColor: dialogBoxBackgroundColor,
+                  content: Padding(padding: EdgeInsets.all(MediaQuery.of(context).size.width/80), child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Expanded(child: Text(
+                          'This Application catalogs amazon products, mostly seen on Tiktok and allows one to simply group'
+                              'together these products for a more efficient purchases. Please note the amazon links on the application'
+                              'are affiliate links and are used to maintain the application, all purchases and transactions will occur on the amazon website as '
+                              'users will be redirected there on checkout\n\n\n\n About the developer' , style: TextStyle(color: textColor),
+                      )) ,
+                      Expanded(child: Card(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width/80)),
+                        elevation: 8,
+                        child: SingleChildScrollView(child:  Padding(
+                          padding: EdgeInsets.all(MediaQuery.of(context).size.width/80),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding:EdgeInsets.all(MediaQuery.of(context).size.width/80),
+                                child: Row(
+                                  children: const [
+                                    Icon(Icons.person, color: iconColor,)
+                                  ],
+                                ),
+                              ) ,
+
+                              const Text(
+                                'My name is Mthandazo Edwin Siziba, I am an aspiring software engineer who tends to work on '
+                                    'several problem oriented software solutions towards things I see in my life. This application '
+                                    'is an example of that, I keep saving all these amazon products of Tiktok, so why not catalog them!'
+                                    '\n\nYou can find more of my work on my website , sizibamthandazo.dev and there is a more detailed profile there '
+                                    'about who I am. I hope you enjoy this application, if you have a proposal or questions reach out to me :)',
+                                style: TextStyle(color: textColor),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(onPressed: () => launchWebSiteUrl('https://www.sizibamthandazo.dev'),
+                                      icon: const FaIcon(FontAwesomeIcons.globe, color: iconColor,))
+                                ],
+                              )
+                            ],
+                          ),
+                        ),)
+                      )),
+                    ],
+                  ),),
+                ));
+              },
+            ),
             // Rate our application
             ListTile(
               leading: const Icon(Icons.rate_review_outlined, color: iconColor,),

@@ -1,4 +1,6 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:hermes_marketplace/logic/bloc/cart_items_bloc.dart';
 import 'package:hermes_marketplace/pages/bloc_pages/checkout.dart';
 import 'package:hermes_marketplace/pages/home.dart';
 
@@ -84,10 +86,22 @@ class _MyHomePageState extends State<MyHomePage> {
         child: _widgetOptions.elementAt(_selectedIndex)
       ),
       bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          items: <BottomNavigationBarItem>[
+            const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.shopping_cart),
+                icon: Badge(
+                  badgeContent: StreamBuilder(
+                    stream: bloc.getStream,
+                    builder: (context , snapshot) {
+                      if (snapshot.hasData){
+                        return Text(snapshot.data['cart items'].length.toString());
+                      }else{
+                        return const Text('0');
+                      }//end if-else
+                    },
+                  ),
+                  child: const Icon(Icons.shopping_cart),
+                ),
               label: 'Cart'
             )
           ],
