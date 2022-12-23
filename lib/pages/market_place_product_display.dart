@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:hermes_marketplace/constants/custom_variables.dart';
 import 'package:hermes_marketplace/logic/bloc/cart_items_bloc.dart';
-import 'package:hermes_marketplace/objects/product.dart';
-import 'package:hermes_marketplace/persistence/fake_database.dart';
+import 'package:hermes_marketplace/objects/market_place.dart';
 import 'package:hermes_marketplace/widgets/custom_search_delegate.dart';
-import 'package:provider/provider.dart';
+import 'package:hermes_marketplace/widgets/custom_search_delegate_market_place.dart';
 import 'package:share_plus/share_plus.dart';
 
-class ProductDisplay extends StatefulWidget {
-  final Product product;
 
-  const ProductDisplay({Key? key ,  required this.product,}) : super(key: key);
+class MarketplaceProductDisplayPage extends StatefulWidget {
+  final MarketPlace marketPlace;
+
+  const MarketplaceProductDisplayPage({Key? key , required this.marketPlace}) : super(key: key);
 
   @override
-  State<ProductDisplay> createState() => _ProductDisplayState();
+  State<MarketplaceProductDisplayPage> createState() => _MarketplaceProductDisplayPageState();
 }
 
-class _ProductDisplayState extends State<ProductDisplay> {
-  int pageIndex = 0;
+class _MarketplaceProductDisplayPageState extends State<MarketplaceProductDisplayPage> {
   int quantity = 1;
-  List<Product> products = FakeDatabase.getProducts();
+  int pageIndex = 0;
 
   void _increment() {
     setState(() {
@@ -40,7 +39,7 @@ class _ProductDisplayState extends State<ProductDisplay> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    List images = widget.product.networkImage;
+    List images = [widget.marketPlace.image, widget.marketPlace.image,widget.marketPlace.image];
 
     List<Widget> widgets = [];
 
@@ -57,7 +56,7 @@ class _ProductDisplayState extends State<ProductDisplay> {
           IconButton(
               onPressed: (){
                 // go to search
-                showSearch(context: context, delegate: MySearchDelegate());
+                showSearch(context: context, delegate: MySearchDelegateMarketPlace());
               },
               icon: const Icon(Icons.search)
           )
@@ -72,7 +71,7 @@ class _ProductDisplayState extends State<ProductDisplay> {
             SizedBox(
               height: height/100,
             ),
-            Text(widget.product.name , style: const TextStyle(color: textColor, fontSize: 12),),
+            Text(widget.marketPlace.name , style: const TextStyle(color: textColor, fontSize: 12),),
             // share the product
             Padding(
               padding: EdgeInsets.all(width/80),
@@ -81,7 +80,8 @@ class _ProductDisplayState extends State<ProductDisplay> {
                 children: [
                   IconButton(
                       onPressed: () {
-                        Share.share(widget.product.amazonLink);
+                        Share.share('Check out ${widget.marketPlace.name} on the hermes market place app!\n'
+                            'https://www.sizibamthandazo.dev');
                       },
                       icon: const Icon(Icons.share)
                   )
@@ -106,7 +106,7 @@ class _ProductDisplayState extends State<ProductDisplay> {
             Row(
               children: [
                 SizedBox(width: width/100,),
-                Text('CAD\$${widget.product.price}' , style: const TextStyle(color: textColor, fontSize: 25),),
+                Text('CAD\$${widget.marketPlace.price.toStringAsFixed(2)}' , style: const TextStyle(color: textColor, fontSize: 25),),
               ],
             ),
             // the product description
@@ -114,7 +114,7 @@ class _ProductDisplayState extends State<ProductDisplay> {
               color: cardBackgroundColor,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(width/80)),
               elevation: 5,
-              child: Padding(padding: EdgeInsets.all(width/80), child: Text(widget.product.description),),
+              child: Padding(padding: EdgeInsets.all(width/80), child: Text(widget.marketPlace.description),),
             ),),
             // // the social network we found it on
             // Padding(padding: EdgeInsets.all(width/80), child: Row(
@@ -154,17 +154,17 @@ class _ProductDisplayState extends State<ProductDisplay> {
                 Expanded(child: ElevatedButton(
                     onPressed: (){
                       //add to cart
-                      double resultPrice = double.parse(widget.product.price) * quantity;
+                      double resultPrice = widget.marketPlace.price* quantity;
                       bloc.addToCart({
-                        'name' : widget.product.name,
-                        'description' : widget.product.description,
+                        'name' : widget.marketPlace.name,
+                        'description' : widget.marketPlace.description,
                         'price' : resultPrice.toString(),
-                        'source': widget.product.source,
-                        'networkImage':widget.product.networkImage[0],
+                        'source': widget.marketPlace.storeLocation,
+                        'networkImage':widget.marketPlace.image,
                         'quantity' : quantity,
-                        'amazonLink':widget.product.amazonLink,
-                        'asin':widget.product.asin,
-                        'type':'amazon'
+                        'amazonLink':'no link',
+                        'asin':'no asin',
+                        'type':'market'
                       }, context);
 
                     },

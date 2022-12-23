@@ -53,4 +53,8 @@ class CheckOutLogic{
     launchWebSiteUrl(url);
   }//end method
 
+  static void callPaymentMethod() {
+
+  }
+
 }//end check out logic

@@ -121,44 +121,71 @@ class _CheckoutBlocState extends State<CheckoutBloc> {
               ElevatedButton(
                 onPressed: () {
                   final checkoutProducts = snapshot.data['cart items'];
-
-                  String result = '';
-                  double total = 0.0;
-                  // add product to history
-                  for (var value in checkoutProducts){
-                    result = '$result , ${value['amazonLink']}';
-                    OrderHistoryLogic.addNewProduct(HistoryObject(id: Random().nextInt(1000000),
-                        product: Product(
-                            name: value['name'], description:  value['description'],
-                            networkImage: [value['networkImage']], price:  value['price'],
-                            quantity:   value['quantity'], source:  value['source'],
-                            amazonLink:  value['amazonLink'], asin: value['asin'])
-                    ));
-                  }
-
-                  // 'id' : id,
-                  // 'name': product.name,
-                  // 'description' : product.description,
-                  // 'networkImage' : product.networkImage,
-                  // 'price': product.price,
-                  // 'quantity' : product.quantity,
-                  // 'source' : product.source,
-                  // 'amazonLink' : product.amazonLink
-
-                  // CheckOutLogic.sendCheckOutData(result);
-                  CheckOutLogic.sendUrlToLocalBrowser();
-                  bloc.emptyCart();
-                  //call scaffold to inform the user of the change
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Items have been added to order history')));
-                  setState(() {});
-
-                  // call dialog box thanking for patronage
-                  showDialog(context: context, builder: (context) => const AlertDialog(
+                  // todo: let user know how the checkout system works
+                  showDialog(context: context, builder: (context) =>  AlertDialog(
                     backgroundColor: dialogBoxBackgroundColor,
-                    content: Text('The items in your cart have been added to your amazon cart. Please go to your amazon cart to complete the purchase.\n\n\nWe thank you for your patronage. :)' ,
+                    content: const Text('If you added any amazon products, you will be taken to an amazon page to add them to your cart,\n\n'
+                        'When you return to the application, if you have any products from the marketplace, you will be presented with payment options' ,
                       style: TextStyle(color: textColor),
                     ),
-                  ));
+                    actions: [
+                      TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Okay')
+                      )
+                    ],
+                  ), barrierDismissible: false).whenComplete(() {
+                    String result = '';
+                    double total = 0.0;
+                    bool boolean  = false;
+                    // add product to history
+                    for (var value in checkoutProducts){
+                      result = '$result , ${value['amazonLink']}';
+                      OrderHistoryLogic.addNewProduct(HistoryObject(id: Random().nextInt(1000000),
+                          product: Product(
+                              name: value['name'], description:  value['description'],
+                              networkImage: [value['networkImage']], price:  value['price'],
+                              quantity:   value['quantity'], source:  value['source'],
+                              amazonLink:  value['amazonLink'], asin: value['asin'])
+                      ));
+                      if (value['type'].contains('amazon')){
+                        boolean = true;
+                      }
+                    }
+
+                    if (boolean){
+                      CheckOutLogic.sendUrlToLocalBrowser();
+                    }
+
+                    // 'id' : id,
+                    // 'name': product.name,
+                    // 'description' : product.description,
+                    // 'networkImage' : product.networkImage,
+                    // 'price': product.price,
+                    // 'quantity' : product.quantity,
+                    // 'source' : product.source,
+                    // 'amazonLink' : product.amazonLink
+
+                    // CheckOutLogic.sendCheckOutData(result);
+
+                    // todo: implement call payment method
+                    CheckOutLogic.callPaymentMethod();
+                    bloc.emptyCart();
+                    //call scaffold to inform the user of the change
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Items have been added to order history')));
+                    setState(() {});
+
+                    // call dialog box thanking for patronage
+                    showDialog(context: context, builder: (context) => const AlertDialog(
+                      backgroundColor: dialogBoxBackgroundColor,
+                      content: Text('The items in your cart have been added to your amazon cart. Please go to your amazon cart to complete the purchase.\n\n\nWe thank you for your patronage. :)' ,
+                        style: TextStyle(color: textColor),
+                      ),
+                    ));
+                  });
+
                 },
                 child: const Text("Checkout"),
               ),

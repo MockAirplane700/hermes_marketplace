@@ -1,8 +1,10 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hermes_marketplace/logic/bloc/cart_items_bloc.dart';
 import 'package:hermes_marketplace/pages/bloc_pages/checkout.dart';
 import 'package:hermes_marketplace/pages/home.dart';
+import 'package:hermes_marketplace/pages/market_place_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,7 +64,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   static const List<Widget> _widgetOptions = [
     Home(),
-    CheckoutBloc()
+    CheckoutBloc(),
+    MarketPlacePage()
   ];
   
   void _onItemTapped(int index) {
@@ -103,7 +106,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: const Icon(Icons.shopping_cart),
                 ),
               label: 'Cart'
-            )
+            ),
+           const  BottomNavigationBarItem(
+                icon: FaIcon(FontAwesomeIcons.shop),
+                label: 'Market place'
+            ),
           ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber,
